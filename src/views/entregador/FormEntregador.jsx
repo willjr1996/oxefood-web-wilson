@@ -125,12 +125,12 @@ export default function FormEntregador () {
                                 <Form.Input
                                     fluid
                                     label='CEP'
-                                    width={6}                                    
-                                    />
+                                    width={6}>                                    
                                     <InputMask 
                                         mask="99999-999"
                                         placeholder='Ex: 00000-000'
-                                    /> 
+                                    />
+                                    </Form.Input>
                             </Form.Group>
 
 
