@@ -30,7 +30,6 @@ export default function FormCliente () {
                                 />
 
                                 <Form.Input
-                                    required
                                     fluid
                                     label='CPF'>
                                     <InputMask
