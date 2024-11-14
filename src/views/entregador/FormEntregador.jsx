@@ -350,6 +350,22 @@ export default function FormEntregador() {
                             labelPosition='left'
                             color='blue'
                             floated='right'
+                            disabled={!nome || 
+                                !cpf || 
+                                !rg || 
+                                !dataNascimento || 
+                                !foneCelular || 
+                                !foneFixo || 
+                                !qtdEntregasRealizadas || 
+                                !valorFrete || 
+                                !enderecoRua || 
+                                !enderecoComplemento || 
+                                !enderecoNumero || 
+                                !enderecoBairro || 
+                                !enderecoCidade || 
+                                !enderecoCep || 
+                                !enderecoUf
+                                }
                             onClick={() => salvar()}
                         >
                             <Icon name='save' />
