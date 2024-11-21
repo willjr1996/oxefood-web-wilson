@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import InputMask from 'react-input-mask';
+import { Link } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon, Dropdown, Radio } from 'semantic-ui-react';
 import MenuSistema from "../../MenuSistema";
 
@@ -41,7 +42,7 @@ export default function FormEntregador() {
         setEnderecoUf(value);
     };
 
-    const [ativo, setAtivo] = useState(null);
+    const [ativo, setAtivo] = useState(true);
     const handleChangeRadio = (e, { value }) => {
         setAtivo(value);
     };
@@ -275,9 +276,12 @@ export default function FormEntregador() {
                                     fluid
                                     label='CEP'
                                     width={6}
+                                    >
+                                    <InputMask
+                                    mask="99999-999"
                                     value={enderecoCep}
                                     onChange={e => setEnderecoCep(e.target.value)}
-                                >
+                                    />
                                 </Form.Input>
                             </Form.Group>
 
@@ -343,7 +347,7 @@ export default function FormEntregador() {
                             color='orange'
                         >
                             <Icon name='reply' />
-                            Voltar
+                            <Link to={'/list-entregador'}>Voltar</Link>                            
                         </Button>
 
                         <Button
