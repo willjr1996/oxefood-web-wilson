@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import InputMask from 'react-input-mask';
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon, Dropdown, Radio } from 'semantic-ui-react';
 import MenuSistema from "../../MenuSistema";
 
@@ -47,6 +47,8 @@ export default function FormEntregador() {
         setAtivo(value);
     };
 
+    const { state } = useLocation();
+    const [idEntregador, setIdEntregador] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [rg, setRg] = useState();
@@ -61,6 +63,41 @@ export default function FormEntregador() {
     const [enderecoBairro, setEnderecoBairro] = useState();
     const [enderecoCidade, setEnderecoCidade] = useState();
     const [enderecoCep, setEnderecoCep] = useState();
+
+    useEffect(() => {
+        if (state != null && state.id != null) {
+            axios.get("http://localhost:8080/api/entregador/" + state.id)
+                .then((response) => {
+                    setIdEntregador(response.data.id);
+                    setNome(response.data.nome);
+                    setCpf(response.data.cpf);
+                    setRg(response.data.rg);
+                    setDataNascimento(formatarData(response.data.dataNascimento));
+                    setFoneCelular(response.data.foneCelular);
+                    setFoneFixo(response.data.foneFixo);
+                    setQtdEntregasRealizadas(response.data.qtdEntregasRealizadas);
+                    setValorFrete(response.data.valorFrete);
+                    setEnderecoRua(response.data.enderecoRua);
+                    setEnderecoComplemento(response.data.enderecoComplemento);
+                    setEnderecoNumero(response.data.enderecoNumero);
+                    setEnderecoBairro(response.data.enderecoBairro);
+                    setEnderecoCidade(response.data.enderecoCidade);
+                    setEnderecoCep(response.data.enderecoCep);
+                    setEnderecoUf(response.data.enderecoUf);
+                    setAtivo(response.data.ativo);
+                })
+        }
+    }, [state])
+
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-');
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+    }
 
     function salvar() {
         let entregadorRequest = {
@@ -82,61 +119,45 @@ export default function FormEntregador() {
             ativo: ativo
         }
 
-        axios.post("http://localhost:8080/api/entregador", entregadorRequest)
-            .then((response) => {
-                console.log('Entregador cadastrado com sucesso.');
-                console.log(ativo);
-                alert("Entregador cadastrado com sucesso");
-                setNome("");
-                setCpf("");
-                setRg("");
-                setDataNascimento("");
-                setFoneCelular("");
-                setFoneFixo("");
-                setQtdEntregasRealizadas("");
-                setValorFrete("");
-                setEnderecoRua("");
-                setEnderecoComplemento("");
-                setEnderecoNumero("");
-                setEnderecoBairro("");
-                setEnderecoCidade("");
-                setEnderecoCep("");
-                setEnderecoUf("");
-                setAtivo(null);
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o entregador.');
-                alert("Erro ao incluir o entregador.");
-                setNome("");
-                setCpf("");
-                setRg("");
-                setDataNascimento("");
-                setFoneCelular("");
-                setFoneFixo("");
-                setQtdEntregasRealizadas("");
-                setValorFrete("");
-                setEnderecoRua("");
-                setEnderecoComplemento("");
-                setEnderecoNumero("");
-                setEnderecoBairro("");
-                setEnderecoCidade("");
-                setEnderecoCep("");
-                setEnderecoUf("");
-                setAtivo(null);
-            })
+        if (idEntregador != null) { //Alteração:
+            axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
+                .then((response) => {
+                    alert('Entregador alterado com sucesso.');
+                    console.log('Entregador alterado com sucesso.');
+                })
+                .catch((error) => {
+                    alert('Erro ao alterar um entregador.');
+                    console.log('Erro ao alterar um entregador.');
+                })
+        } else { //Cadastro:
+            axios.post("http://localhost:8080/api/entregador", entregadorRequest)
+                .then((response) => {
+                    alert('Entregador cadastrado com sucesso.');
+                    console.log('Entregador cadastrado com sucesso.');
+                })
+                .catch((error) => {
+                    alert('Erro ao incluir o entregador.');
+                    console.log('Erro ao incluir o entregador.');
+                })
+        }
     }
 
     return (
 
         <div>
-            
+
             <MenuSistema tela={'entregador'} />
-            
+
             <div style={{ marginTop: '3%' }}>
 
                 <Container textAlign='justified' >
 
-                    <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+                {idEntregador === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    }
+                    {idEntregador != undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Entregador &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    }
 
                     <Divider />
 
@@ -276,11 +297,11 @@ export default function FormEntregador() {
                                     fluid
                                     label='CEP'
                                     width={6}
-                                    >
+                                >
                                     <InputMask
-                                    mask="99999-999"
-                                    value={enderecoCep}
-                                    onChange={e => setEnderecoCep(e.target.value)}
+                                        mask="99999-999"
+                                        value={enderecoCep}
+                                        onChange={e => setEnderecoCep(e.target.value)}
                                     />
                                 </Form.Input>
                             </Form.Group>
@@ -332,58 +353,58 @@ export default function FormEntregador() {
                                         onChange={handleChangeRadio}
                                     />
                                 </Form.Field>
-                        </Form.Group>
+                            </Form.Group>
 
-                    </Form>
+                        </Form>
 
-                    <div style={{ marginTop: '4%' }}>
+                        <div style={{ marginTop: '4%' }}>
 
-                        <Button
-                            type="button"
-                            inverted
-                            circular
-                            icon
-                            labelPosition='left'
-                            color='orange'
-                        >
-                            <Icon name='reply' />
-                            <Link to={'/list-entregador'}>Voltar</Link>                            
-                        </Button>
+                            <Button
+                                type="button"
+                                inverted
+                                circular
+                                icon
+                                labelPosition='left'
+                                color='orange'
+                            >
+                                <Icon name='reply' />
+                                <Link to={'/list-entregador'}>Voltar</Link>
+                            </Button>
 
-                        <Button
-                            inverted
-                            circular
-                            icon
-                            labelPosition='left'
-                            color='blue'
-                            floated='right'
-                            disabled={!nome || 
-                                !cpf || 
-                                !rg || 
-                                !dataNascimento || 
-                                !foneCelular || 
-                                !foneFixo || 
-                                !qtdEntregasRealizadas || 
-                                !valorFrete || 
-                                !enderecoRua || 
-                                !enderecoComplemento || 
-                                !enderecoNumero || 
-                                !enderecoBairro || 
-                                !enderecoCidade || 
-                                !enderecoCep || 
-                                !enderecoUf
+                            <Button
+                                inverted
+                                circular
+                                icon
+                                labelPosition='left'
+                                color='blue'
+                                floated='right'
+                                disabled={!nome ||
+                                    !cpf ||
+                                    !rg ||
+                                    !dataNascimento ||
+                                    !foneCelular ||
+                                    !foneFixo ||
+                                    !qtdEntregasRealizadas ||
+                                    !valorFrete ||
+                                    !enderecoRua ||
+                                    !enderecoComplemento ||
+                                    !enderecoNumero ||
+                                    !enderecoBairro ||
+                                    !enderecoCidade ||
+                                    !enderecoCep ||
+                                    !enderecoUf
                                 }
-                            onClick={() => salvar()}
-                        >
-                            <Icon name='save' />
-                            Salvar
-                        </Button>
+                                onClick={() => salvar()}
+                            >
+                                <Icon name='save' />
+                                Salvar
+                            </Button>
+
+                        </div>
 
                     </div>
 
-            </div>
-
-        </Container>
+                </Container>
             </div >
         </div >
 

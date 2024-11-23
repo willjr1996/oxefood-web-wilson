@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
@@ -7,11 +7,37 @@ import MenuSistema from '../../MenuSistema';
 
 export default function FormCliente() {
 
+    const { state } = useLocation();
+    const [idCliente, setIdCliente] = useState();
     const [nome, setNome] = useState();
     const [cpf, setCpf] = useState();
     const [dataNascimento, setDataNascimento] = useState();
     const [foneCelular, setFoneCelular] = useState();
     const [foneFixo, setFoneFixo] = useState();
+
+    useEffect(() => {
+        if (state != null && state.id != null) {
+            axios.get("http://localhost:8080/api/cliente/" + state.id)
+                .then((response) => {
+                    setIdCliente(response.data.id)
+                    setNome(response.data.nome)
+                    setCpf(response.data.cpf)
+                    setDataNascimento(formatarData(response.data.dataNascimento))
+                    setFoneCelular(response.data.foneCelular)
+                    setFoneFixo(response.data.foneFixo)
+                })
+        }
+    }, [state])
+
+    function formatarData(dataParam) {
+
+        if (dataParam === null || dataParam === '' || dataParam === undefined) {
+            return ''
+        }
+
+        let arrayData = dataParam.split('-');
+        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
+    }
 
     function salvar() {
 
@@ -23,25 +49,27 @@ export default function FormCliente() {
             foneFixo: foneFixo
         }
 
-        axios.post("http://localhost:8080/api/cliente", clienteRequest)
-            .then((response) => {
-                console.log('Cliente cadastrado com sucesso.');
-                alert("Cliente cadastrado com sucesso");
-                setNome("");
-                setCpf("");
-                setDataNascimento("");
-                setFoneCelular("");
-                setFoneFixo("");
-            })
-            .catch((error) => {
-                console.log('Erro ao incluir o cliente.');
-                alert("Erro ao incluir o cliente.");
-                setNome("");
-                setCpf("");
-                setDataNascimento("");
-                setFoneCelular("");
-                setFoneFixo("");
-            })
+        if (idCliente != null) { //Alteração:
+            axios.put("http://localhost:8080/api/cliente/" + idCliente, clienteRequest)
+                .then((response) => { 
+                    alert('Cliente alterado com sucesso.');
+                    console.log('Cliente alterado com sucesso.') ;
+                })
+                .catch((error) => { 
+                    alert('Erro ao alterar um cliente.');
+                    console.log('Erro ao alterar um cliente.');
+                })
+        } else { //Cadastro:
+            axios.post("http://localhost:8080/api/cliente", clienteRequest)
+                .then((response) => { 
+                    alert('Cliente cadastrado com sucesso.'); 
+                    console.log('Cliente cadastrado com sucesso.'); 
+                })
+                .catch((error) => { 
+                    alert('Erro ao incluir o cliente.'); 
+                    console.log('Erro ao incluir o cliente.'); 
+                })
+        }
     }
 
     return (
@@ -53,7 +81,12 @@ export default function FormCliente() {
 
                 <Container textAlign='justified' >
 
-                    <h2> <span style={{ color: 'darkgray' }}> Cliente &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro </h2>
+                    {idCliente === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Cliente &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    }
+                    {idCliente != undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Cliente &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    }
 
                     <Divider />
 
