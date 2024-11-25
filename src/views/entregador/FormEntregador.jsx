@@ -387,7 +387,6 @@ export default function FormEntregador() {
                                     !qtdEntregasRealizadas ||
                                     !valorFrete ||
                                     !enderecoRua ||
-                                    !enderecoComplemento ||
                                     !enderecoNumero ||
                                     !enderecoBairro ||
                                     !enderecoCidade ||
