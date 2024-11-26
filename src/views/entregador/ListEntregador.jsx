@@ -12,6 +12,7 @@ export default function ListEntregador() {
 
     const [openModalEntregador, setOpenModalEntregador] = useState(false);
     const [idEntregador, setIdEntregador] = useState();
+    const [listaEntregador, setListaEntregador] = useState([]);
 
     useEffect(() => {
         carregarLista();
@@ -27,9 +28,9 @@ export default function ListEntregador() {
 
     function carregarEntregador() {
 
-        axios.get("http://localhost:8080/api/entregador" + idEntregador)
+        axios.get("http://localhost:8080/api/entregador/" + idEntregador)
             .then((response) => {
-                setIdEntregador(response.data)
+                setListaEntregador([response.data])
             })
     }
 
@@ -39,9 +40,15 @@ export default function ListEntregador() {
     }
 
     function confirmaVisualizar(id) {
-        setOpenModalEntregador(true)
         setIdEntregador(id)
+        setOpenModalEntregador(true)
     }
+
+    useEffect(() => {
+        if (idEntregador){
+            carregarEntregador();
+        }
+    }, [idEntregador]);
 
     function formatarData(dataParam) {
 
@@ -102,18 +109,19 @@ export default function ListEntregador() {
                                     <Table.HeaderCell>CPF</Table.HeaderCell>
                                     <Table.HeaderCell>RG</Table.HeaderCell>
                                     <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
-                                    <Table.HeaderCell>Celular</Table.HeaderCell>
-                                    <Table.HeaderCell>Telefone Fixo</Table.HeaderCell>
-                                    <Table.HeaderCell>Entregas Realizadas</Table.HeaderCell>
-                                    <Table.HeaderCell>Valor frete</Table.HeaderCell>
-                                    <Table.HeaderCell>Rua</Table.HeaderCell>
-                                    <Table.HeaderCell>Número</Table.HeaderCell>
-                                    <Table.HeaderCell>Complemento</Table.HeaderCell>
-                                    <Table.HeaderCell>Bairro</Table.HeaderCell>
-                                    <Table.HeaderCell>Cidade</Table.HeaderCell>
-                                    <Table.HeaderCell>Estado</Table.HeaderCell>
-                                    <Table.HeaderCell>CEP</Table.HeaderCell>
-                                    <Table.HeaderCell>Status</Table.HeaderCell>
+                                    {/* <Table.HeaderCell>Celular</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Telefone Fixo</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Entregas Realizadas</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Valor frete</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Rua</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Número</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Complemento</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Bairro</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Cidade</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Estado</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>CEP</Table.HeaderCell> */}
+                                    {/* <Table.HeaderCell>Status</Table.HeaderCell> */}
+
                                     <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
                                 </Table.Row>
                             </Table.Header>
@@ -127,18 +135,19 @@ export default function ListEntregador() {
                                         <Table.Cell>{entregador.cpf}</Table.Cell>
                                         <Table.Cell>{entregador.rg}</Table.Cell>
                                         <Table.Cell>{formatarData(entregador.dataNascimento)}</Table.Cell>
-                                        <Table.Cell>{entregador.foneCelular}</Table.Cell>
-                                        <Table.Cell>{entregador.foneFixo}</Table.Cell>
-                                        <Table.Cell>{entregador.qtdEntregasRealizadas}</Table.Cell>
-                                        <Table.Cell>{entregador.valorFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoRua}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoNumero}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoComplemento}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoBairro}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoCidade}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoUf}</Table.Cell>
-                                        <Table.Cell>{entregador.enderecoCep}</Table.Cell>
-                                        <Table.Cell>{entregador.ativo}</Table.Cell>
+                                        {/* <Table.Cell>{entregador.foneCelular}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.foneFixo}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.qtdEntregasRealizadas}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.valorFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoRua}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoNumero}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoComplemento}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoBairro}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoCidade}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoUf}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.enderecoCep}</Table.Cell> */}
+                                        {/* <Table.Cell>{entregador.ativo}</Table.Cell> */}
+
                                         <Table.Cell textAlign='center'>
 
                                             <Button
@@ -166,7 +175,7 @@ export default function ListEntregador() {
                                                 color='blue'
                                                 title='Clique aqui para visualizar todos os dados deste entregador'
                                                 icon
-                                                onClick={e => confirmaVisualizar(entregador.idEntregador)}>
+                                                onClick={e => confirmaVisualizar(entregador.id)}>
                                                 <Icon name='eye' />
                                             </Button>
                                         </Table.Cell>
@@ -197,65 +206,83 @@ export default function ListEntregador() {
                     </Button>
                 </Modal.Actions>
             </Modal>
+
             <Modal
                 basic
                 onClose={() => setOpenModalEntregador(false)}
-                onOpen={() => setOpenModalEntregador(true)}
+                onOpen={() => {
+                    carregarEntregador();
+                    setOpenModalEntregador(true);
+                }}
                 open={openModalEntregador}
             >
-                <Modal.Actions>
-                    <Table color='orange' sortable celled>
-                        <Table.Header>
-                            <Table.Row>
-                                <Table.HeaderCell>Nome</Table.HeaderCell>
-                                <Table.HeaderCell>CPF</Table.HeaderCell>
-                                <Table.HeaderCell>RG</Table.HeaderCell>
-                                <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
-                                <Table.HeaderCell>Celular</Table.HeaderCell>
-                                <Table.HeaderCell>Telefone Fixo</Table.HeaderCell>
-                                <Table.HeaderCell>Entregas Realizadas</Table.HeaderCell>
-                                <Table.HeaderCell>Valor frete</Table.HeaderCell>
-                                <Table.HeaderCell>Rua</Table.HeaderCell>
-                                <Table.HeaderCell>Número</Table.HeaderCell>
-                                <Table.HeaderCell>Complemento</Table.HeaderCell>
-                                <Table.HeaderCell>Bairro</Table.HeaderCell>
-                                <Table.HeaderCell>Cidade</Table.HeaderCell>
-                                <Table.HeaderCell>Estado</Table.HeaderCell>
-                                <Table.HeaderCell>CEP</Table.HeaderCell>
-                                <Table.HeaderCell>Status</Table.HeaderCell>
-                                <Table.HeaderCell textAlign='center'>Ações</Table.HeaderCell>
-                            </Table.Row>
-                        </Table.Header>
+                <Header icon>
+                    <Icon name='eye' />
+                    Detalhes do Entregador
+                </Header>
+                <Modal.Content>
+                    <div style={{ marginTop: '3%' }}>
 
-                        <Table.Body>
-                            {lista.map(entregador => (
-                                <Table.Row key={entregador.id}>
-                                    <Table.Cell>{entregador.nome}</Table.Cell>
-                                    <Table.Cell>{entregador.cpf}</Table.Cell>
-                                    <Table.Cell>{entregador.rg}</Table.Cell>
-                                    <Table.Cell>{formatarData(entregador.dataNascimento)}</Table.Cell>
-                                    <Table.Cell>{entregador.foneCelular}</Table.Cell>
-                                    <Table.Cell>{entregador.foneFixo}</Table.Cell>
-                                    <Table.Cell>{entregador.qtdEntregasRealizadas}</Table.Cell>
-                                    <Table.Cell>{entregador.valorFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoRua}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoNumero}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoComplemento}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoBairro}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoCidade}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoUf}</Table.Cell>
-                                    <Table.Cell>{entregador.enderecoCep}</Table.Cell>
-                                    <Table.Cell>{entregador.ativo}</Table.Cell>
-                                    <Table.Cell textAlign='center'>
-                                        {/* Aqui podem ir as ações (ex: botões de editar ou excluir) */}
-                                    </Table.Cell>
-                                </Table.Row>
-                            ))}
-                        </Table.Body>
-                    </Table>
+                        <Container textAlign='justified'>
+
+                            <Table color='orange' sortable celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>Nome</Table.HeaderCell>
+                                        <Table.HeaderCell>CPF</Table.HeaderCell>
+                                        <Table.HeaderCell>RG</Table.HeaderCell>
+                                        <Table.HeaderCell>Data de Nascimento</Table.HeaderCell>
+                                        <Table.HeaderCell>Celular</Table.HeaderCell>
+                                        <Table.HeaderCell>Telefone Fixo</Table.HeaderCell>
+                                        <Table.HeaderCell>Entregas Realizadas</Table.HeaderCell>
+                                        <Table.HeaderCell>Valor frete</Table.HeaderCell>
+                                        <Table.HeaderCell>Rua</Table.HeaderCell>
+                                        <Table.HeaderCell>Número</Table.HeaderCell>
+                                        <Table.HeaderCell>Complemento</Table.HeaderCell>
+                                        <Table.HeaderCell>Bairro</Table.HeaderCell>
+                                        <Table.HeaderCell>Cidade</Table.HeaderCell>
+                                        <Table.HeaderCell>Estado</Table.HeaderCell>
+                                        <Table.HeaderCell>CEP</Table.HeaderCell>
+                                        <Table.HeaderCell>Status</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+
+                                <Table.Body>
+
+                                    {listaEntregador.map(listaEntregador => (
+
+                                        <Table.Row key={listaEntregador.id}>
+                                            <Table.Cell>{listaEntregador.nome}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.cpf}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.rg}</Table.Cell>
+                                            <Table.Cell>{formatarData(listaEntregador.dataNascimento)}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.foneCelular}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.foneFixo}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.qtdEntregasRealizadas}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.valorFrete.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoRua}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoNumero}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoComplemento}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoBairro}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoCidade}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoUf}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.enderecoCep}</Table.Cell>
+                                            <Table.Cell>{listaEntregador.ativo ? 'Ativo' : 'Não Ativo'}</Table.Cell>
+                                            <Table.Cell textAlign='center'>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        </Container>
+                    </div>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button color='green' onClick={() => setOpenModalEntregador(false)}>
+                        <Icon name='checkmark' /> Fechar
+                    </Button>
                 </Modal.Actions>
             </Modal>
-
         </div>
     )
 }
