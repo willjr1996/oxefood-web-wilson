@@ -8,66 +8,43 @@ import MenuSistema from '../../MenuSistema';
 export default function FormCliente() {
 
     const { state } = useLocation();
-    const [idCliente, setIdCliente] = useState();
-    const [nome, setNome] = useState();
-    const [cpf, setCpf] = useState();
-    const [dataNascimento, setDataNascimento] = useState();
-    const [foneCelular, setFoneCelular] = useState();
-    const [foneFixo, setFoneFixo] = useState();
+    const [idCategoria, setIdCategoria] = useState();
+
 
     useEffect(() => {
         if (state != null && state.id != null) {
-            axios.get("http://localhost:8080/api/cliente/" + state.id)
+            axios.get("http://localhost:8080/api/categoriaproduto/" + state.id)
                 .then((response) => {
-                    setIdCliente(response.data.id)
-                    setNome(response.data.nome)
-                    setCpf(response.data.cpf)
-                    setDataNascimento(formatarData(response.data.dataNascimento))
-                    setFoneCelular(response.data.foneCelular)
-                    setFoneFixo(response.data.foneFixo)
+                    setIdCategoria(response.data.descricao);
                 })
         }
     }, [state])
 
-    function formatarData(dataParam) {
-
-        if (dataParam === null || dataParam === '' || dataParam === undefined) {
-            return ''
-        }
-
-        let arrayData = dataParam.split('-');
-        return arrayData[2] + '/' + arrayData[1] + '/' + arrayData[0];
-    }
-
     function salvar() {
 
-        let clienteRequest = {
-            nome: nome,
-            cpf: cpf,
-            dataNascimento: dataNascimento,
-            foneCelular: foneCelular,
-            foneFixo: foneFixo
+        let categoriaProdutoRequest = {
+            descricao: descricao
         }
 
-        if (idCliente != null) { //Alteração:
-            axios.put("http://localhost:8080/api/cliente/" + idCliente, clienteRequest)
+        if (idCategoria != null) { //Alteração:
+            axios.put("http://localhost:8080/api/categoriaproduto/" + idCategoria, categoriaProdutoRequest)
                 .then((response) => { 
-                    alert('Cliente alterado com sucesso.');
-                    console.log('Cliente alterado com sucesso.') ;
+                    alert('Categoria alterada com sucesso.');
+                    console.log('Categoria alterada com sucesso.') ;
                 })
                 .catch((error) => { 
-                    alert('Erro ao alterar um cliente.');
-                    console.log('Erro ao alterar um cliente.');
+                    alert('Erro ao alterar uma categoria.');
+                    console.log('Erro ao alterar uma categoria.');
                 })
         } else { //Cadastro:
-            axios.post("http://localhost:8080/api/cliente", clienteRequest)
+            axios.post("http://localhost:8080/api/categoriaproduto", categoriaProdutoRequest)
                 .then((response) => { 
-                    alert('Cliente cadastrado com sucesso.'); 
-                    console.log('Cliente cadastrado com sucesso.'); 
+                    alert('Categoria cadastrada com sucesso.'); 
+                    console.log('Categoria cadastrada com sucesso.'); 
                 })
                 .catch((error) => { 
-                    alert('Erro ao incluir o cliente.'); 
-                    console.log('Erro ao incluir o cliente.'); 
+                    alert('Erro ao incluir o Categoria.'); 
+                    console.log('Erro ao incluir o categoria.'); 
                 })
         }
     }
@@ -75,17 +52,17 @@ export default function FormCliente() {
     return (
 
         <div>
-            <MenuSistema tela={'empresa'} />
+            <MenuSistema tela={'cliente'} />
 
             <div style={{ marginTop: '3%' }}>
 
                 <Container textAlign='justified' >
 
-                    {idCliente === undefined &&
-                        <h2> <span style={{ color: 'darkgray' }}> Empresa &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
+                    {idCategoria === undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Categoria &nbsp;<Icon name='angle double right' size="small" /> </span> Cadastro</h2>
                     }
-                    {idCliente != undefined &&
-                        <h2> <span style={{ color: 'darkgray' }}> Empresa &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
+                    {idCategoria != undefined &&
+                        <h2> <span style={{ color: 'darkgray' }}> Categoria &nbsp;<Icon name='angle double right' size="small" /> </span> Alteração</h2>
                     }
 
                     <Divider />
@@ -172,7 +149,7 @@ export default function FormCliente() {
                                 color='orange'
                             >
                                 <Icon name='reply' />
-                                <Link to={'/list-empresa'}>Voltar</Link>
+                                <Link to={'/list-cliente'}>Voltar</Link>
                             </Button>
 
                             <Button
