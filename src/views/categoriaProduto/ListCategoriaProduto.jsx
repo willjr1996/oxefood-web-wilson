@@ -64,7 +64,7 @@ export default function ListCategoriaProduto() {
                             icon='clipboard outline'
                             floated='right'
                             as={Link}
-                            to='form-categoriaproduto'
+                            to='/form-categoriaproduto'
                         />
                         <br /><br /><br />
 

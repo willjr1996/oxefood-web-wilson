@@ -81,7 +81,7 @@ export default function ListEntregador() {
 
     return (
         <div>
-            <MenuSistema tela={'entregador  '} />
+            <MenuSistema tela={'entregador'} />
             <div style={{ marginTop: '3%' }}>
 
                 <Container textAlign='justified' >

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
-import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
 import MenuSistema from '../../MenuSistema';
 
-export default function FormCliente() {
+export default function FormCategoriaProduto() {
 
     const { state } = useLocation();
+    const [descricao, setDescricao] = useState();
     const [idCategoria, setIdCategoria] = useState();
 
 
@@ -15,7 +15,8 @@ export default function FormCliente() {
         if (state != null && state.id != null) {
             axios.get("http://localhost:8080/api/categoriaproduto/" + state.id)
                 .then((response) => {
-                    setIdCategoria(response.data.descricao);
+                    setIdCategoria(response.data.id);
+                    setDescricao(response.data.descricao);
                 })
         }
     }, [state])
@@ -52,7 +53,7 @@ export default function FormCliente() {
     return (
 
         <div>
-            <MenuSistema tela={'cliente'} />
+            <MenuSistema tela={'categoriaProduto'} />
 
             <div style={{ marginTop: '3%' }}>
 
@@ -76,63 +77,11 @@ export default function FormCliente() {
                                 <Form.Input
                                     required
                                     fluid
-                                    label='Nome'
+                                    label='Descrição'
                                     maxLength="100"
-                                    value={nome}
-                                    onChange={e => setNome(e.target.value)}
+                                    value={descricao}
+                                    onChange={e => setDescricao(e.target.value)}
                                 />
-
-                                <Form.Input
-                                    fluid
-                                    label='CPF'
-                                >
-                                    <InputMask
-                                        required
-                                        mask="999.999.999-99"
-                                        value={cpf}
-                                        onChange={e => setCpf(e.target.value)}
-                                    />
-                                </Form.Input>
-
-                            </Form.Group>
-
-                            <Form.Group>
-
-                                <Form.Input
-                                    fluid
-                                    label='Fone Celular'
-                                    width={6}>
-                                    <InputMask
-                                        mask="(99) 99999.9999"
-                                        value={foneCelular}
-                                        onChange={e => setFoneCelular(e.target.value)}
-                                    />
-                                </Form.Input>
-
-                                <Form.Input
-                                    fluid
-                                    label='Fone Fixo'
-                                    width={6}>
-                                    <InputMask
-                                        mask="(99) 9999.9999"
-                                        value={foneFixo}
-                                        onChange={e => setFoneFixo(e.target.value)}
-                                    />
-                                </Form.Input>
-
-                                <Form.Input
-                                    fluid
-                                    label='Data Nascimento'
-                                    width={6}
-                                >
-                                    <InputMask
-                                        mask="99/99/9999"
-                                        maskChar={null}
-                                        placeholder="Ex: 20/03/1985"
-                                        value={dataNascimento}
-                                        onChange={e => setDataNascimento(e.target.value)}
-                                    />
-                                </Form.Input>
 
                             </Form.Group>
 
@@ -149,7 +98,7 @@ export default function FormCliente() {
                                 color='orange'
                             >
                                 <Icon name='reply' />
-                                <Link to={'/list-cliente'}>Voltar</Link>
+                                <Link to={'/list-categoriaproduto'}>Voltar</Link>
                             </Button>
 
                             <Button
@@ -159,7 +108,7 @@ export default function FormCliente() {
                                 labelPosition='left'
                                 color='blue'
                                 floated='right'
-                                disabled={!nome || !cpf || !dataNascimento || !foneCelular || !foneFixo}
+                                disabled={!descricao}
                                 onClick={() => salvar()}
                             >
                                 <Icon name='save' />
