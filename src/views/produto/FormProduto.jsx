@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Button, Container, Divider, Form, FormGroup, Icon, TextArea } from 'semantic-ui-react';
+import { notifyError, notifySuccess } from '../../views/util/Util';
 import MenuSistema from "../../MenuSistema";
 
 export default function FormProduto() {
@@ -54,22 +55,32 @@ export default function FormProduto() {
         if (idProduto != null) { //Alteração:
             axios.put("http://localhost:8080/api/produto/" + idProduto, produtoRequest)
                 .then((response) => {
-                    alert('Produto alterado com sucesso.');
-                    console.log('Produto alterado com sucesso.');
+                    notifySuccess('Produto alterado com sucesso.');
                 })
                 .catch((error) => {
-                    alert('Erro ao alterar um produto.');
-                    console.log('Erro ao alterar um produto.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/produto", produtoRequest)
                 .then((response) => {
-                    alert('Produto cadastrado com sucesso.');
-                    console.log('Produto cadastrado com sucesso.');
+                    notifySuccess('Produto cadastrado com sucesso.');
                 })
                 .catch((error) => {
-                    alert('Erro ao incluir o produto.');
-                    console.log('Erro ao incluir o produto.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         }
     }

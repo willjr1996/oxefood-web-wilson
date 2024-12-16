@@ -3,6 +3,7 @@ import axios from "axios";
 import InputMask from 'react-input-mask';
 import { Link, useLocation } from "react-router-dom";
 import { Button, Container, Divider, Form, Icon, Dropdown, Radio } from 'semantic-ui-react';
+import { notifyError, notifySuccess } from '../../views/util/Util';
 import MenuSistema from "../../MenuSistema";
 
 export default function FormEntregador() {
@@ -122,22 +123,32 @@ export default function FormEntregador() {
         if (idEntregador != null) { //Alteração:
             axios.put("http://localhost:8080/api/entregador/" + idEntregador, entregadorRequest)
                 .then((response) => {
-                    alert('Entregador alterado com sucesso.');
-                    console.log('Entregador alterado com sucesso.');
+                    notifySuccess('Entregador alterado com sucesso.');
                 })
                 .catch((error) => {
-                    alert('Erro ao alterar um entregador.');
-                    console.log('Erro ao alterar um entregador.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/entregador", entregadorRequest)
                 .then((response) => {
-                    alert('Entregador cadastrado com sucesso.');
-                    console.log('Entregador cadastrado com sucesso.');
+                    notifySuccess('Entregador cadastrado com sucesso.');
                 })
                 .catch((error) => {
-                    alert('Erro ao incluir o entregador.');
-                    console.log('Erro ao incluir o entregador.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         }
     }

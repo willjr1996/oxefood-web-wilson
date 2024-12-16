@@ -204,7 +204,7 @@ export default function ListCliente() {
             >
                 <Header icon>
                     <Icon name='eye' />
-                    Detalhes do endereço do cliente
+                    Endereços do cliente
                 </Header>
                 <Modal.Content>
                     <div style={{ marginTop: '3%' }}>

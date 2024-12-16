@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import InputMask from 'react-input-mask';
 import { Button, Container, Divider, Form, Icon, Dropdown } from 'semantic-ui-react';
+import { notifyError, notifySuccess } from '../../views/util/Util';
 import MenuSistema from '../../MenuSistema';
 
 export default function FormEnderecoCliente() {
@@ -14,8 +15,7 @@ export default function FormEnderecoCliente() {
     const [cep, setCep] = useState();
     const [cidade, setCidade] = useState();
     const [complemento, setComplemento] = useState();
-    console.log("State recebido:", state.id);
-
+ 
     const uf = [
         { key: 'AC', text: 'Acre', value: 'Acre' },
         { key: 'AL', text: 'Alagoas', value: 'Alagoas' },
@@ -109,14 +109,19 @@ export default function FormEnderecoCliente() {
         //         })
         // }
 
-        axios.post("http://localhost:8080/api/cliente/endereco", + state.id, enderecoRequest)
+        axios.post(`http://localhost:8080/api/cliente/endereco/${state.id}`, enderecoRequest)
                 .then((response) => { 
-                    alert('Endereço cadastrado com sucesso.'); 
-                    console.log('Endereço cadastrado com sucesso.'); 
+                    notifySuccess('Endereço cadastrado com sucesso.');
                 })
                 .catch((error) => { 
-                    alert('Erro ao incluir o Endereço.'); 
-                    console.log('Erro ao incluir o Endereço.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
     }
 

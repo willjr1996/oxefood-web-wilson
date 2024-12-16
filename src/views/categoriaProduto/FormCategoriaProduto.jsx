@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { Button, Container, Divider, Form, Icon } from 'semantic-ui-react';
+import { notifyError, notifySuccess } from '../../views/util/Util';
 import MenuSistema from '../../MenuSistema';
 
 export default function FormCategoriaProduto() {
@@ -30,22 +31,32 @@ export default function FormCategoriaProduto() {
         if (idCategoria != null) { //Alteração:
             axios.put("http://localhost:8080/api/categoriaproduto/" + idCategoria, categoriaProdutoRequest)
                 .then((response) => { 
-                    alert('Categoria alterada com sucesso.');
-                    console.log('Categoria alterada com sucesso.') ;
+                    notifySuccess('Categoria alterada com sucesso.');
                 })
                 .catch((error) => { 
-                    alert('Erro ao alterar uma categoria.');
-                    console.log('Erro ao alterar uma categoria.');
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         } else { //Cadastro:
             axios.post("http://localhost:8080/api/categoriaproduto", categoriaProdutoRequest)
                 .then((response) => { 
-                    alert('Categoria cadastrada com sucesso.'); 
-                    console.log('Categoria cadastrada com sucesso.'); 
+                    notifySuccess('Categoria cadastrada com sucesso.'); 
                 })
                 .catch((error) => { 
-                    alert('Erro ao incluir o Categoria.'); 
-                    console.log('Erro ao incluir o categoria.'); 
+                    if (error.response.data.errors != undefined) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            notifyError(error.response.data.errors[i].defaultMessage)
+                     }
+             } else {
+                 notifyError(error.response.data.message)
+             }
+         
                 })
         }
     }
