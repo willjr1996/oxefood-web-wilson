@@ -10,6 +10,10 @@ export default function ListCliente() {
     const [openModal, setOpenModal] = useState(false);
     const [idRemover, setIdRemover] = useState();
 
+    const [openModalEndereco, setOpenModalEndereco] = useState(false);
+    const [idCliente, setIdCliente] = useState();
+    const [listaEndereco, setListaEndereco] = useState([]);
+
 
     useEffect(() => {
         carregarLista();
@@ -28,6 +32,24 @@ export default function ListCliente() {
         setIdRemover(id)
     }
 
+    useEffect(() => {
+        if (idCliente) {
+            carregarEndereco();
+        }
+    }, [idCliente]);
+
+    function confirmaVisualizar(id) {
+        setIdCliente(id)
+        setOpenModalEndereco(true)
+    }
+
+    function carregarEndereco() {
+        axios.get("http://localhost:8080/api/cliente/" + idCliente)
+            .then((response) => {
+                setListaEndereco(response.data.enderecos)
+            })
+    }
+
     function formatarData(dataParam) {
 
         if (dataParam === null || dataParam === '' || dataParam === undefined) {
@@ -41,19 +63,19 @@ export default function ListCliente() {
     async function remover() {
 
         await axios.delete('http://localhost:8080/api/cliente/' + idRemover)
-        .then((response) => {
-            alert('Cliente removido com sucesso.');
-            console.log('Cliente removido com sucesso.');
-  
-            axios.get("http://localhost:8080/api/cliente")
             .then((response) => {
-                setLista(response.data);
+                alert('Cliente removido com sucesso.');
+                console.log('Cliente removido com sucesso.');
+
+                axios.get("http://localhost:8080/api/cliente")
+                    .then((response) => {
+                        setLista(response.data);
+                    })
             })
-        })
-        .catch((error) => {
-            alert('Erro ao remover um cliente.');
-            console.log('Erro ao remover um cliente.');
-        })
+            .catch((error) => {
+                alert('Erro ao remover um cliente.');
+                console.log('Erro ao remover um cliente.');
+            })
         setOpenModal(false);
     }
 
@@ -121,9 +143,26 @@ export default function ListCliente() {
                                                 icon
                                                 onClick={e => confirmaRemover(cliente.id)}>
                                                 <Icon name='trash' />
-
                                             </Button>
-
+                                            <Button
+                                                inverted
+                                                circular
+                                                color='purple'
+                                                title='Clique aqui para visualizar o endereço do cliente'
+                                                icon
+                                                onClick={e => confirmaVisualizar(cliente.id)}
+                                            >
+                                                <Icon name='eye' />
+                                            </Button>
+                                            <Button
+                                                inverted
+                                                circular
+                                                color='blue'
+                                                title='Clique aqui para adicionar o endereço do cliente'
+                                                icon                                               
+                                            >
+                                                <Link to="/form-enderecocliente" state={{ id: cliente.id }} style={{ color: 'blue' }}> <Icon name='add' /> </Link>
+                                            </Button>
                                         </Table.Cell>
                                     </Table.Row>
                                 ))}
@@ -149,6 +188,64 @@ export default function ListCliente() {
                     </Button>
                     <Button color='green' inverted onClick={() => remover()}>
                         <Icon name='checkmark' /> Sim
+                    </Button>
+                </Modal.Actions>
+            </Modal>
+
+            {/* visualizar endereços */}
+            <Modal
+                basic
+                onClose={() => setOpenModalEndereco(false)}
+                onOpen={() => {
+                    setOpenModalEndereco(true);
+                    carregarEndereco();
+                }}
+                open={openModalEndereco}
+            >
+                <Header icon>
+                    <Icon name='eye' />
+                    Detalhes do endereço do cliente
+                </Header>
+                <Modal.Content>
+                    <div style={{ marginTop: '3%' }}>
+
+                        <Container textAlign='justified'>
+
+                            <Table color='orange' sortable celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>Rua</Table.HeaderCell>
+                                        <Table.HeaderCell>Número</Table.HeaderCell>
+                                        <Table.HeaderCell>Complemento</Table.HeaderCell>
+                                        <Table.HeaderCell>Bairro</Table.HeaderCell>
+                                        <Table.HeaderCell>CEP</Table.HeaderCell>
+                                        <Table.HeaderCell>Cidade</Table.HeaderCell>
+                                        <Table.HeaderCell>Estado</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+
+                                <Table.Body>
+                                    {listaEndereco.map(enderecos => (
+                                        <Table.Row key={enderecos.id}>
+                                            <Table.Cell>{enderecos.rua}</Table.Cell>
+                                            <Table.Cell>{enderecos.numero}</Table.Cell>
+                                            <Table.Cell>{enderecos.complemento}</Table.Cell>
+                                            <Table.Cell>{enderecos.bairro}</Table.Cell>
+                                            <Table.Cell>{enderecos.cep}</Table.Cell>
+                                            <Table.Cell>{enderecos.cidade}</Table.Cell>
+                                            <Table.Cell>{enderecos.estado}</Table.Cell>
+                                            <Table.Cell textAlign='center'>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        </Container>
+                    </div>
+                </Modal.Content>
+                <Modal.Actions>
+                    <Button color='green' onClick={() => setOpenModalEndereco(false)}>
+                        <Icon name='checkmark' /> Fechar
                     </Button>
                 </Modal.Actions>
             </Modal>

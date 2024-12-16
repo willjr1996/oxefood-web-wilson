@@ -9,6 +9,7 @@ import ListProduto from "./views/produto/ListProduto"
 import FormProduto from './views/produto/FormProduto';
 import ListCategoriaProduto from "./views/categoriaProduto/ListCategoriaProduto";
 import FormCategoriaProduto from "./views/categoriaProduto/FormCategoriaProduto";
+import FormEnderecoCliente from './views/cliente/FormEnderecoCliente';
 // import FormVenda from "./views/venda/FormVenda";
 // import ListVenda from "./views/venda/ListVenda";
 
@@ -23,6 +24,7 @@ function Rotas() {
                 <Route path="list-categoriaproduto" element={ <ListCategoriaProduto/> } />
                 <Route path="form-categoriaproduto" element={ <FormCategoriaProduto/> } />
                 <Route path="form-cliente" element={ <FormCliente/> } />
+                <Route path="form-enderecocliente" element={ <FormEnderecoCliente/> } />
                 <Route path="form-produto" element={ <FormProduto/> } />
                 <Route path="form-entregador" element={ <FormEntregador/> } />
                 {/* <Route path="list-venda" element={ <ListVenda/> } />
