@@ -78,9 +78,9 @@ function Rotas() {
         <Route 
           path="form-cliente" 
           element={
-          <ProtectedRoute>
-            <FormCliente />
-          </ProtectedRoute>
+            <ProtectedRoute>
+              <FormCliente />
+            </ProtectedRoute>
           }
         />
 

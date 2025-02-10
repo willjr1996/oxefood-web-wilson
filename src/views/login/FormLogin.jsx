@@ -85,7 +85,6 @@ export default function FormLogin () {
 
                         </Segment>
                     </Form>
-                        
                     <Message>
                         Esqueceu a sua senha: <Link>clique aqui</Link>
                     </Message>
